@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en" data-theme="aurora">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0a0618">
+<link rel="manifest" href="./manifest.json">
+<title>PrivateBrief</title>
+<style>
+:root{--bg:#0a0618;--solid:#150f2e;--panel:rgba(255,255,255,.055);--panel2:rgba(255,255,255,.07);--line:rgba(255,255,255,.12);--ink:#f5f2ff;--mute:#a9a1d3;--vio:#a78bfa;--cy:#27e6ff;--amb:#ffc247;--cor:#ff5c8a;--grn:#3df5a0;--blue:#6aa8ff;--pink:#ff5ce1;--on:#0a0618;--g1:rgba(255,92,225,.26);--g2:rgba(39,230,255,.2);--g3:rgba(167,139,250,.28);--glass:blur(14px);color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="midnight"]{--bg:#0a0e1a;--solid:#131a2e;--panel:#131a2e;--panel2:#1a2340;--line:#27325a;--ink:#e9edfb;--mute:#93a0c4;--vio:#8b7bff;--cy:#2fe3d3;--amb:#ffb648;--cor:#ff6b85;--grn:#4ade80;--blue:#5cb0ff;--pink:#c77dff;--on:#0a0e1a;--g1:rgba(139,123,255,.2);--g2:rgba(47,227,211,.13);--g3:rgba(139,123,255,.06);--glass:none}
+:root[data-theme="daylight"]{--bg:#eef1fa;--solid:#fff;--panel:#fff;--panel2:#f3f5fc;--line:#d8def0;--ink:#161b36;--mute:#59628a;--vio:#6a4cff;--cy:#0b8fb3;--amb:#b45f06;--cor:#d3305f;--grn:#13813f;--blue:#2563eb;--pink:#c026d3;--on:#fff;--g1:rgba(255,92,225,.14);--g2:rgba(34,211,238,.18);--g3:rgba(139,92,246,.14);--glass:none;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;color:var(--ink);background:var(--bg);font:15.5px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;background:radial-gradient(620px 420px at 12% 8%,var(--g1),transparent 62%),radial-gradient(720px 460px at 92% 4%,var(--g2),transparent 62%),radial-gradient(820px 520px at 50% 108%,var(--g3),transparent 62%);animation:drift 24s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(0,-3%,0) scale(1.07)}}
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px 22px;max-width:1300px;margin:0 auto;padding:16px 18px 56px}
+@media(max-width:880px){.app{grid-template-columns:1fr}}
+.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;gap:11px;align-items:center}.brand b{font-size:23px;letter-spacing:-.02em;background:linear-gradient(90deg,var(--vio),var(--cy),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand span{display:block;font-size:12.5px;color:var(--mute);margin-top:-3px}
+.chips,.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.end{justify-content:flex-end}
+.pill{display:inline-flex;gap:7px;align-items:center;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);font-size:13.5px;font-weight:600;color:var(--mute)}
+.pill.dot::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}.pill.on{color:var(--cy)}.pill.off{color:var(--grn)}
+button,.btn{font:inherit;font-weight:600;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 14px;cursor:pointer;display:inline-block;transition:transform .12s,border-color .12s,box-shadow .12s}
+button:hover,.btn:hover{border-color:var(--vio);transform:translateY(-1px)}
+button:focus-visible,.btn:focus-within,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.primary{background:linear-gradient(135deg,var(--vio),var(--cy));border-color:transparent;color:var(--on);box-shadow:0 8px 22px -10px var(--vio)}.primary:hover{border-color:transparent;filter:brightness(1.08)}
+.danger{border-color:var(--cor);color:var(--cor)}.wide{width:100%;margin-bottom:12px;padding:11px 14px}
+button[aria-pressed="true"].pill{color:var(--ink);border-color:var(--cy);box-shadow:0 0 0 1px var(--cy) inset}
+.themes{display:inline-flex;gap:6px;padding:4px 6px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.sw{width:22px;height:22px;padding:0;border-radius:50%;border:2px solid transparent}.sw[aria-pressed="true"]{border-color:var(--ink)}
+.sw[data-v="aurora"]{background:linear-gradient(135deg,#ff5ce1,#27e6ff)}.sw[data-v="midnight"]{background:linear-gradient(135deg,#8b7bff,#131a2e)}.sw[data-v="daylight"]{background:linear-gradient(135deg,#fff,#a7b4ff)}
+label{display:block;font-size:13.5px;font-weight:600;color:var(--mute);margin:0 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+textarea{min-height:190px;resize:vertical;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-weight:500;margin:12px 0}.chk input{width:auto}
+ul{margin:0;padding:0}li{list-style:none}.hint{font-size:13px;color:var(--mute);margin:8px 0 0}.err{color:var(--cor);font-weight:600;margin:6px 0 0}.empty{color:var(--mute);margin:0}
+.card{background:var(--panel);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 14px 34px -22px rgba(0,0,0,.55)}
+h1{font-size:clamp(23px,3.4vw,32px);margin:0;letter-spacing:-.02em}h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}h2 small{font-weight:500;color:var(--mute);font-size:13.5px}
+.ico{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;font-size:15px;background:linear-gradient(135deg,rgba(167,139,250,.35),rgba(39,230,255,.25));border:1px solid var(--line)}
+.hero{border:1px solid transparent;background:linear-gradient(var(--solid),var(--solid)) padding-box,linear-gradient(135deg,var(--pink),var(--vio),var(--cy)) border-box;border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:0 24px 60px -28px var(--vio);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,var(--g2),transparent 70%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero h2{font-size:clamp(26px,4.4vw,38px);line-height:1.1;margin:0 0 8px;letter-spacing:-.025em;display:block;background:linear-gradient(90deg,var(--ink) 30%,var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:0;color:var(--mute);max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:10px;margin-top:18px}
+.kpi{border-radius:14px;padding:11px 13px;font-size:13px;color:var(--mute);border:1px solid var(--line);background:var(--panel2)}.kpi b{display:block;font-size:28px;line-height:1.15;color:var(--ink)}
+.kpi.cor{background:linear-gradient(135deg,rgba(255,92,138,.22),rgba(255,92,138,.04));border-color:rgba(255,92,138,.35)}.kpi.cor b{color:var(--cor)}
+.kpi.amb{background:linear-gradient(135deg,rgba(255,194,71,.2),rgba(255,194,71,.04));border-color:rgba(255,194,71,.35)}.kpi.amb b{color:var(--amb)}
+.kpi.vio{background:linear-gradient(135deg,rgba(167,139,250,.24),rgba(167,139,250,.04));border-color:rgba(167,139,250,.4)}.kpi.vio b{color:var(--vio)}
+.kpi.cy{background:linear-gradient(135deg,rgba(39,230,255,.18),rgba(39,230,255,.03));border-color:rgba(39,230,255,.35)}.kpi.cy b{color:var(--cy)}
+.kpi.grn{background:linear-gradient(135deg,rgba(61,245,160,.18),rgba(61,245,160,.03));border-color:rgba(61,245,160,.35)}.kpi.grn b{color:var(--grn)}
+.kpi.btnk{display:block;text-align:left;font:inherit;font-size:13px;font-weight:400;cursor:pointer}.kpi.btnk b{font-weight:700}.kpi.btnk:hover{transform:translateY(-2px);box-shadow:0 12px 24px -16px var(--vio)}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+.it{background:var(--panel2);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:6px 14px 14px 6px;padding:11px 13px;margin-bottom:9px;transition:transform .12s}
+.it:hover{transform:translateY(-1px)}
+.it.high{border-left-color:var(--cor);background:linear-gradient(90deg,rgba(255,92,138,.14),transparent 55%),var(--panel2)}
+.it.med{border-left-color:var(--amb);background:linear-gradient(90deg,rgba(255,194,71,.1),transparent 55%),var(--panel2)}
+.it.fin{opacity:.6;border-left-color:var(--grn);background:var(--panel2)}.it.low{border-left-color:var(--line)}
+.it p{margin:2px 0 7px;overflow-wrap:anywhere}.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--mute)}.meta b{color:var(--ink);font-size:14px}
+.chip{font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:rgba(106,168,255,.18);color:var(--blue)}
+.chip.cor{background:rgba(255,92,138,.18);color:var(--cor)}.chip.amb{background:rgba(255,194,71,.2);color:var(--amb)}.chip.vio{background:rgba(167,139,250,.22);color:var(--vio)}.chip.grn{background:rgba(61,245,160,.18);color:var(--grn)}
+.cl{display:flex;flex-wrap:wrap;gap:6px}.acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.acts button{padding:4px 11px;font-size:13.5px}.acts .ok{border-color:var(--grn);color:var(--grn)}
+mark{background:rgba(255,194,71,.3);color:inherit;border-radius:4px;padding:0 3px}mark.m{background:rgba(167,139,250,.38);font-weight:700}
+.ci{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"av ct bd" "av cm cm" "br br br";gap:2px 10px;width:100%;text-align:left;margin-bottom:9px;padding:11px 12px;background:var(--panel);border-radius:14px}
+.ci.act{border-color:var(--vio);box-shadow:0 0 0 1px var(--vio) inset,0 12px 28px -18px var(--vio)}
+.av{grid-area:av;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#0a0618;background:linear-gradient(135deg,hsl(var(--h) 90% 66%),hsl(calc(var(--h) + 55) 90% 60%))}
+.ct{grid-area:ct;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;align-self:center}.cm{grid-area:cm;font-size:12.5px;color:var(--mute);font-weight:500}.ci .badge{grid-area:bd;align-self:center}.ci .bar{grid-area:br;margin-top:6px}
+.badge{font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.badge.ok{background:rgba(61,245,160,.16);color:var(--grn)}.badge.cor{background:rgba(255,92,138,.18);color:var(--cor);animation:pulse 2.2s infinite}.badge.amb{background:rgba(255,194,71,.2);color:var(--amb)}.badge.mu{background:var(--panel2);color:var(--mute)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,92,138,.45)}60%{box-shadow:0 0 0 7px rgba(255,92,138,0)}}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--vio),var(--cy));transition:width .35s}
+.trust{margin-top:14px;padding:12px 14px;border-radius:14px;border:1px solid rgba(61,245,160,.35);background:linear-gradient(135deg,rgba(61,245,160,.14),rgba(39,230,255,.06))}.trust b{display:block;color:var(--grn)}.trust span{font-size:13px;color:var(--mute)}
+.chead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}.chead .sub{margin:2px 0 0;color:var(--mute);font-size:14px}
+.prog{margin-top:12px;font-size:13.5px;color:var(--mute)}.prog .bar{margin-top:6px}
+.tabs{display:flex;gap:4px;margin:16px 0 14px;overflow-x:auto;padding:5px;border:1px solid var(--line);border-radius:15px;background:var(--panel);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass)}
+.tabs button{background:none;border:none;border-radius:11px;padding:9px 15px;color:var(--mute);white-space:nowrap;transform:none}
+.tabs button:hover{color:var(--ink);transform:none}.tabs button[aria-selected="true"]{background:linear-gradient(135deg,var(--vio),var(--cy));color:var(--on);box-shadow:0 8px 20px -10px var(--vio)}
+.opts{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-top:14px}.opts summary{cursor:pointer;font-weight:700}
+.og{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.pills button{border-radius:999px;padding:5px 13px;font-size:14px}.pills button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+dialog{background:var(--solid);color:var(--ink);border:1px solid var(--line);border-radius:20px;width:min(640px,calc(100% - 28px));padding:0;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(5,4,16,.7);backdrop-filter:blur(5px)}.dlg{padding:22px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.facts{display:grid;gap:8px;margin:0 0 14px}.facts li{padding-left:22px;position:relative}.facts li::before{content:"";position:absolute;left:0;top:.5em;width:10px;height:10px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px var(--grn)}
+.live{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:14px;display:grid;gap:4px}
+body.blur .ptext{filter:blur(6px);transition:filter .15s}body.blur .ptext:hover{filter:none}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.feat .card{margin:0}.feat p{margin:0;color:var(--mute);font-size:14.5px}
+.hgrid{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{position:relative;width:96px;height:96px;filter:drop-shadow(0 0 12px rgba(167,139,250,.5))}.ring svg{transform:rotate(-90deg)}.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:26px}
+.art{flex:0 0 auto}.art .spin{transform-box:view-box;transform-origin:110px 110px;animation:sw 14s linear infinite}
+.cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}.arr{font-size:26px;color:var(--amb);font-weight:700;text-align:center}.lab{font-size:12.5px;font-weight:700;color:var(--mute)}
+@media(max-width:700px){.cmp{grid-template-columns:1fr}}
+.ev{margin-top:8px;padding:8px 10px;border:1px dashed var(--cy);border-radius:10px;font-size:13.5px;color:var(--mute)}.ev b{color:var(--cy)}.ev ul{margin:4px 0 0 18px}.ev li{list-style:disc}
+.draft{margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:10px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}.draft button{padding:4px 11px;font-size:13.5px}
+.radar{width:100%;max-width:560px;display:block;margin:0 auto;filter:drop-shadow(0 0 22px rgba(167,139,250,.25))}.dotb{cursor:pointer;transition:r .15s}.dotb:focus-visible{outline:none;stroke:var(--cy);stroke-width:4}
+.sweep{transform-box:view-box;transform-origin:260px 260px;animation:sw 8s linear infinite}@keyframes sw{to{transform:rotate(360deg)}}
+.checks{display:grid;gap:8px}.chk2{display:grid;grid-template-columns:auto 1fr;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 12px}.chk2 i{width:12px;height:12px;border-radius:50%;margin-top:6px;background:var(--mute)}.chk2.ok i{background:var(--grn);box-shadow:0 0 8px var(--grn)}.chk2.bad i{background:var(--cor)}.chk2.warn i{background:var(--amb)}.chk2 b{display:block}.chk2 span{color:var(--mute);font-size:14px}
+.banner{border-radius:14px;padding:13px 15px;font-weight:700;margin-bottom:12px;border:1px solid var(--line)}.banner.off{background:rgba(61,245,160,.13);color:var(--grn);border-color:var(--grn)}.banner.on{background:rgba(39,230,255,.1);color:var(--cy);border-color:var(--cy)}
+.plog{font:12.5px ui-monospace,Menlo,Consolas,monospace;color:var(--mute);display:grid;gap:3px}
+.mini{padding:6px 0;border-top:1px solid var(--line);font-size:14.5px}.mini b{color:var(--cy);margin-right:6px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;z-index:70}#toast.show{opacity:1}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60}#confetti i{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;animation:fall 2.3s ease-in forwards}
+@keyframes fall{to{transform:translate3d(var(--dx),108vh,0) rotate(760deg)}}
+.flash{outline:2px solid var(--cy);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="top">
+  <div class="brand">
+   <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--vio)"/><stop offset="1" stop-color="#2fe3d3"/></linearGradient></defs><rect width="34" height="34" rx="9" fill="url(#g)"/><rect x="9" y="15" width="16" height="11" rx="3" fill="#0a0e1a"/><path d="M12 15v-3a5 5 0 0 1 10 0v3" fill="none" stroke="#0a0e1a" stroke-width="2.4" stroke-linecap="round"/></svg>
+   <div><b>PrivateBrief</b><span>Offline catch-up assistant</span></div>
+  </div>
+  <div class="chips"><span class="pill dot on" id="net">Checking</span><span class="pill" id="reqs">Sent to the internet: 0</span><button class="pill" data-a="proof">Offline proof</button><button class="pill" data-a="evid" aria-pressed="false">Evidence mode</button><button class="pill" id="blur" data-a="blur" aria-pressed="false">Blur text</button><button class="pill" data-a="pv">Privacy</button><span class="themes" role="group" aria-label="Theme"><button class="sw" data-a="theme" data-v="aurora" title="Aurora" aria-label="Aurora theme" aria-pressed="true"></button><button class="sw" data-a="theme" data-v="midnight" title="Midnight" aria-label="Midnight theme" aria-pressed="false"></button><button class="sw" data-a="theme" data-v="daylight" title="Daylight" aria-label="Daylight theme" aria-pressed="false"></button></span></div>
+ </header>
+ <aside aria-label="Saved conversations">
+  <button class="primary wide" data-a="new">Import a chat</button>
+  <ul id="list"></ul>
+  <p class="hint" id="store"></p>
+  <div class="trust"><b>On-device only</b><span id="trustsub">Nothing is uploaded.</span></div>
+ </aside>
+ <main id="main"></main>
+</div>
+
+<dialog id="dimp"><div class="dlg">
+ <h2>Import a chat</h2>
+ <div class="grid2"><div><label for="itl">Name this chat</label><input id="itl" placeholder="e.g. Hackathon team" autocomplete="off"></div>
+ <div><label for="ime">Your name in the chat</label><input id="ime" placeholder="e.g. Riya" autocomplete="off"></div></div>
+ <label for="iraw">Paste messages, or choose or drop a file</label>
+ <textarea id="iraw" spellcheck="false" placeholder="12/10/26, 9:41 am - Karthik: @Riya please send the slides by 6 pm today"></textarea>
+ <div class="btns" style="margin-top:10px"><label class="btn" style="margin:0;color:var(--ink)">Choose file<input id="ifile" type="file" accept=".txt,.json,text/plain,application/json" hidden></label><button data-a="sample" type="button">Load sample chats</button></div>
+ <label class="chk"><input type="checkbox" id="isave" checked> Save on this device so I can come back to it</label>
+ <p class="hint">Reads WhatsApp .txt, Telegram result.json, Slack .json, or lines like "Name: message". Nothing is uploaded.</p>
+ <p id="ierr" class="err" role="alert"></p>
+ <div class="btns end"><button data-a="icancel" type="button">Cancel</button><button class="primary" data-a="igo" type="button">Analyze chat</button></div>
+</div></dialog>
+
+<dialog id="dpv"><div class="dlg">
+ <h2>Privacy on this device</h2>
+ <ul class="facts">
+  <li>Chats are analyzed inside this tab. There is no server, account or analytics.</li>
+  <li>Saved chats live in this browser's IndexedDB, on this device only.</li>
+  <li>The page loads no external scripts, fonts or images.</li>
+  <li>The only connection it can make is to a model on localhost, and only if you pick that engine.</li>
+ </ul>
+ <div class="live" id="live"></div>
+ <div class="btns"><button id="exp" type="button">Export backup</button><label class="btn" style="margin:0;color:var(--ink)">Restore backup<input id="rest" type="file" accept=".json,application/json" hidden></label><button class="danger" data-a="wipe" id="wipe" type="button">Delete all data</button></div>
+ <p id="pmsg" class="hint"></p>
+ <div class="btns end" style="margin-top:12px"><button class="primary" data-a="pclose" type="button">Close</button></div>
+</div></dialog>
+<dialog id="dproof"><div class="dlg">
+ <h2>Offline proof</h2>
+ <div id="pbanner" class="banner"></div>
+ <div id="pchecks" class="checks"></div>
+ <div class="btns" style="margin:12px 0"><button class="primary" data-a="selftest" type="button">Run offline self-test</button><button data-a="lock" id="lockbtn" type="button">Turn lockdown off</button></div>
+ <p id="pself" class="hint" style="color:var(--ink)">Turn off Wi-Fi now. The banner changes and everything keeps working.</p>
+ <h2 style="margin-top:14px;font-size:15px">Event log</h2><ul id="plog" class="plog"></ul>
+ <div class="btns end" style="margin-top:12px"><button class="primary" data-a="pcloseproof" type="button">Close</button></div>
+</div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="confetti" aria-hidden="true"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pl=(n,w)=>n+' '+w+(n==1?'':'s');
+const cut=(s,n)=>s.length>n?s.slice(0,n-1)+'…':s;
+const DAYS='monday|tuesday|wednesday|thursday|friday|saturday|sunday|mon|tue|wed|thu|fri|sat|sun';
+const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
+const TM='\\d{1,2}(?::\\d{2})?\\s?(?:am|pm)';
+const DL=new RegExp('\\b(?:by|before|until|till|on|due)\\s+(?:(?:next|this)\\s+)?(?:'+DAYS+'|tomorrow|today|tonight|noon|midnight|eod|end of (?:the )?day|'+TM+'|\\d{1,2}(?:st|nd|rd|th)?\\s(?:'+MON+')\\w*)(?:,?\\s+(?:at\\s+)?'+TM+')?'
+ +'|\\b(?:today|tonight|tomorrow|eod|this (?:week|weekend|evening|morning)|next (?:week|month|'+DAYS+'))\\b(?:\\s+(?:at\\s+)?'+TM+')?'
+ +'|\\b\\d{1,2}(?:st|nd|rd|th)?\\s(?:'+MON+')[a-z]*(?:,?\\s'+TM+')?|\\b(?:'+MON+')[a-z]*\\s\\d{1,2}\\b|\\b'+TM+'\\b','gi');
+const ACTION=/\b(please|pls|can you|could you|can u|would you|need(?:s)? to|have to|must|make sure|don'?t forget|remember to|send|submit|share|upload|review|prepare|finish|complete|update|push|confirm|reply|call|ping|bring|fix|book|register|fill)\b/i;
+const DECISION=/\b(decided|decision|let'?s go with|we(?:'ll| will) go with|final(?:ly)?|confirmed|agreed|approved|locked|going ahead|settled|moved to|rescheduled|changed to|postponed|cancel+ed)\b/i;
+const URGENT=/\b(urgent(?:ly)?|asap|immediately|critical|important|right now|emergency|high priority|last chance|don'?t miss)\b/i;
+const GROUP=/\b(everyone|all|guys|team|folks)\b/i;
+const CHATTER=/^(ok+|okay|lol|haha+|hmm+|thanks|thank you|yes|yeah|no|nice|great|cool)\W*$/i;
+const STOP=new Set('the and for that this with you are was have has not but all can will from they their what when where which there then than just got get its our out about would could should please thanks thank okay yes yeah before anyone final must everything again still after really going know think submit submitted also one any been were into more some like need want here tomorrow today tonight guys everyone hey hello'.split(' '));
+
+function parseJSON(t){
+ const s=t.trim();if(s[0]!=='{'&&s[0]!=='[')return null;
+ try{
+  const d=JSON.parse(s);
+  const flat=x=>typeof x==='string'?x:Array.isArray(x)?x.map(flat).join(''):(x&&x.text)||'';
+  if(d&&Array.isArray(d.messages)){
+   return d.messages.filter(m=>m&&(m.type==='message'||!m.type)).map(m=>{const a=String(m.date||'').replace('T',' ').split(' ');
+    return {date:a[0],time:(a[1]||'').slice(0,5),who:String(m.from||m.actor||'Unknown'),text:flat(m.text).trim()}}).filter(m=>m.text);
+  }
+  if(Array.isArray(d)){
+   const nm={};d.forEach(m=>{const p=m&&m.user_profile,n=(p&&(p.real_name||p.display_name))||(m&&m.user_name);if(m&&m.user&&n)nm[m.user]=n});
+   return d.filter(m=>m&&typeof m.text==='string'&&m.text.trim()&&(!m.subtype||m.subtype==='thread_broadcast')).map(m=>{
+    const seconds=Number.parseFloat(m.ts),date=Number.isFinite(seconds)?new Date(seconds*1000):null,validDate=date&&!isNaN(date.getTime());
+    const text=m.text.replace(/<@(\w+)>/g,(a,u)=>'@'+(nm[u]||u)).replace(/<!(channel|here|everyone)>/g,'@$1').replace(/<(https?:[^|>]+)(\|[^>]*)?>/g,'$1').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+    return {date:validDate?date.toISOString().slice(0,10):'',time:validDate?date.toISOString().slice(11,16):'',who:nm[m.user]||m.user_name||m.user||'Unknown',text};
+   });
+  }
+ }catch(e){}
+ return null;
+}
+function parse(t){const j=parseJSON(t);if(j&&j.length)return j;
+ const lines=t.replace(/[\u200e\u200f\u202f\u00a0]/g,' ').split(/\r?\n/);
+ const re=/^\[?(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}),?\s+(\d{1,2}[:.]\d{2}(?::\d{2})?(?:\s?[ap]\.?m\.?)?)\]?\s*(?:[-–—]\s*)?([^:]{1,40}?):\s([\s\S]*)$/i;
+ const ts=/^\[?\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4},?\s+\d{1,2}[:.]\d{2}/;
+ const re2=/^([^:]{1,30}):\s(.+)$/;
+ const stamped=lines.some(l=>re.test(l));
+ const out=[];let cur=null;
+ for(const line of lines){
+  let m=null;
+  if(stamped){m=re.exec(line);if(m){cur={date:m[1],time:m[2].toLowerCase(),who:m[3].trim(),text:m[4].trim()};out.push(cur)}}
+  else{m=re2.exec(line);if(m){cur={date:'',time:'',who:m[1].trim(),text:m[2].trim()};out.push(cur)}}
+  if(!m){if(stamped&&ts.test(line))cur=null;else if(cur&&line.trim())cur.text+='\n'+line.trim()}
+ }
+ return out.filter(m=>!/^<?media omitted>?$/i.test(m.text));
+}
+
+let NAME='';
+function analyze(ms,nameStr){
+ const toks=nameStr.split(/[\s,]+/).filter(t=>t.length>1);
+ NAME=toks.length?'@?\\b(?:'+toks.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b':'';
+ const nameRe=NAME?new RegExp(NAME,'i'):null;
+ ms.forEach(m=>m.mine=toks.some(t=>m.who.toLowerCase().includes(t.toLowerCase())));
+ ms.forEach((m,i)=>{
+  const t=m.text;m.i=i;m.dls=t.match(DL)||[];
+  m.mention=!m.mine&&!!nameRe&&nameRe.test(t);
+  m.urgent=URGENT.test(t);m.task=ACTION.test(t);m.decision=DECISION.test(t);m.group=GROUP.test(t);
+  let s=0;
+  if(m.mention)s+=3;if(m.dls.length)s+=3;if(m.task)s+=2;if(m.urgent)s+=3;if(m.decision)s+=2;
+  if(m.mention&&t.includes('?'))s+=1;if(m.group&&(m.task||m.dls.length))s+=1;
+  if(m.mine||(t.length<14&&CHATTER.test(t)))s=0;
+  m.score=s;m.pri=s>=7?'high':s>=4?'med':'low';
+  m.unanswered=m.mention&&!ms.slice(i+1,i+9).some(x=>x.mine);
+ });
+ const attn=ms.filter(m=>!m.mine&&(m.score>=5||(m.mention&&m.score>=3)))
+  .sort((a,b)=>(b.unanswered-a.unanswered)||b.score-a.score||b.i-a.i);
+ const dec=ms.filter(m=>m.decision&&!CHATTER.test(m.text));
+ const act=ms.filter(m=>!m.mine&&m.task&&(m.mention||m.group||m.dls.length));
+ const dl=ms.filter(m=>m.dls.length);
+ const counts={};ms.forEach(m=>counts[m.who]=(counts[m.who]||0)+1);
+ const people=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+ const skip=new Set(people.flatMap(p=>p[0].toLowerCase().split(/\s+/)).concat(toks.map(t=>t.toLowerCase())));
+ const freq={};
+ ms.forEach(m=>(m.text.toLowerCase().match(/[a-z]{4,}/g)||[]).forEach(w=>{if(!STOP.has(w)&&!skip.has(w))freq[w]=(freq[w]||0)+1}));
+ const topics=Object.entries(freq).filter(e=>e[1]>=2).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>e[0]);
+ const mentions=ms.filter(m=>m.mention).length,unans=ms.filter(m=>m.unanswered).length;
+ let s=pl(ms.length,'message')+' from '+pl(people.length,'person').replace('persons','people')
+  +(ms[0].date?', '+ms[0].date+' to '+ms[ms.length-1].date:'')+'. Most active: '
+  +people.slice(0,3).map(p=>p[0]+' ('+p[1]+')').join(', ')+'.';
+ if(topics.length)s+=' Main topics: '+topics.join(', ')+'.';
+ s+=nameRe?' You were mentioned '+pl(mentions,'time')+(unans?', and '+unans+(unans==1?' is':' are')+' still waiting for your reply.':'.')
+  :' Add your name to see mentions and replies you owe.';
+ s+=' Found '+pl(dec.length,'decision')+', '+pl(act.length,'action item')+' and '+pl(dl.length,'deadline')+'.';
+ return {ms,attn,dec,act,dl,topics,mentions,unans,people,summary:s,hasName:!!nameRe};
+}
+
+
+
+const nameSrc=me=>{const t=(me||'').split(/[\s,]+/).filter(x=>x.length>1);return t.length?'@?\\b(?:'+t.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b':''};
+function hl(t){
+ const ns=nameSrc(cur&&cur.me),re=new RegExp('('+(ns||'(?!)')+')|('+DL.source+')','gi');
+ return esc(t).replace(re,(m,a)=>a?'<mark class="m">'+m+'</mark>':'<mark>'+m+'</mark>').replace(/\n/g,'<br>');
+}
+
+/* ---------- time handling ---------- */
+const MONI={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11},DOW={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+const dayAdd=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+function msgDate(m,fmt){
+ const s=m.date;if(!s)return null;let y,mo,d;
+ if(/^\d{4}-\d{2}-\d{2}$/.test(s)){[y,mo,d]=s.split('-').map(Number);mo--}
+ else{const p=s.split(/[\/.\-]/).map(Number);y=p[2]<100?2000+p[2]:p[2];if(fmt==='mdy'){mo=p[0]-1;d=p[1]}else{d=p[0];mo=p[1]-1}}
+ let h=0,mi=0;const t=(m.time||'').match(/(\d{1,2})[:.](\d{2})(?::\d{2})?\s?([ap])?/i);
+ if(t){h=+t[1];mi=+t[2];if(t[3]){const pm=/p/i.test(t[3]);if(pm&&h<12)h+=12;if(!pm&&h===12)h=0}}
+ const r=new Date(y,mo,d,h,mi);return isNaN(r)?null:r;
+}
+function resolveDL(m,b){
+ if(!b)return null;const t=m.dls.join(' ; ').toLowerCase();let day=null,h=null,mi=0;
+ const tm=t.match(/(\d{1,2})(?::(\d{2}))?\s?(am|pm)/);
+ if(tm){h=+tm[1];mi=+(tm[2]||0);if(tm[3]==='pm'&&h<12)h+=12;if(tm[3]==='am'&&h===12)h=0}
+ const m1=t.match(new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th)?\\s('+MON+')[a-z]*\\b')),m2=t.match(new RegExp('\\b('+MON+')[a-z]*\\s(\\d{1,2})\\b'));
+ if(m1)day=new Date(b.getFullYear(),MONI[m1[2]],+m1[1]);
+ else if(m2)day=new Date(b.getFullYear(),MONI[m2[1]],+m2[2]);
+ else if(/\btomorrow\b/.test(t))day=dayAdd(b,1);
+ else if(/\b(today|tonight|eod|end of (?:the )?day)\b/.test(t))day=dayAdd(b,0);
+ else{const w=t.match(new RegExp('\\b('+DAYS+')\\b'));if(w)day=dayAdd(b,(DOW[w[1].slice(0,3)]-b.getDay()+7)%7);else if(h!==null)day=dayAdd(b,0)}
+ if(!day)return null;
+ if(h===null){if(/\btonight\b/.test(t))h=21;else if(/\b(eod|end of)/.test(t))h=18;else{h=23;mi=59}}
+ day.setHours(h,mi,0,0);return day;
+}
+const fmtT=d=>d.toLocaleString([],{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+function dueInfo(m,now){
+ if(!m.due)return null;const d=(m.due-now)/36e5,ad=Math.abs(d);
+ const rel=ad<1?Math.max(1,Math.round(ad*60))+' min':ad<48?Math.round(ad)+' h':Math.round(ad/24)+' days';
+ return d<0?{cls:'cor',t:'Overdue by '+rel}:d<24?{cls:'amb',t:'Due in '+rel}:{cls:'',t:'Due in '+rel};
+}
+
+/* ---------- change and conflict detectors ---------- */
+const CHG=/\b(changed?|changing|moved|moving|rescheduled|postponed|pushed|preponed|instead|no longer|cancel+ed|switch(?:ed|ing)?|revised|updated|actually|correction|new (?:time|date|venue|plan|deadline))\b/i;
+const GEN=new Set('will would should that this with have been from they them then than when what there their your about could'.split(' '));
+const kw=m=>new Set((m.text.toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!STOP.has(w)&&!GEN.has(w)));
+function vals(m){
+ const v=[];
+ (m.text.match(new RegExp('\\b'+TM+'\\b','gi'))||[]).forEach(x=>v.push(x.toLowerCase().replace(/\s+/g,' ')));
+ (m.text.match(/\b[A-Za-z]{3,}\s?\d+\b/g)||[]).forEach(x=>{if(!new RegExp('^(?:'+MON+'|'+DAYS+')','i').test(x))v.push(x.toLowerCase())});
+ (m.text.match(new RegExp('\\b\\d{1,2}(?:st|nd|rd|th)?\\s(?:'+MON+')[a-z]*','gi'))||[]).forEach(x=>v.push(x.toLowerCase()));
+ (m.text.match(/\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/gi)||[]).forEach(x=>v.push(x.toLowerCase()));
+ return [...new Set(v)];
+}
+function detectChanges(ms){
+ const out=[],K=ms.map(kw);
+ ms.forEach((n,j)=>{
+  if(!CHG.test(n.text)||CHATTER.test(n.text))return;
+  let best=-1,bs=0;
+  for(let i=j-1;i>=0&&j-i<80;i--){let s=0;K[i].forEach(w=>{if(K[j].has(w))s++});if(s>bs){bs=s;best=i}}
+  if(best<0)return;const o=ms[best],a=vals(o),b=vals(n);
+  if(a.join()===b.join()&&!/\b(instead|cancel)/i.test(n.text))return;
+  out.push({o,n,from:a,to:b,kws:[...K[best]].filter(w=>K[j].has(w))});
+ });
+ return out;
+}
+function detectConflicts(ms,ch){
+ const used=new Set(ch.map(x=>x.n.i)),out=[],K=ms.map(kw);
+ for(let j=0;j<ms.length;j++){
+  const n=ms[j];if(used.has(j)||CHG.test(n.text)||!(n.dls.length||vals(n).length))continue;
+  for(let i=j-1;i>=0&&j-i<80;i--){
+   const o=ms[i];if(!(o.dls.length||vals(o).length)||CHG.test(o.text))continue;
+   const sh=[...K[i]].filter(w=>K[j].has(w));if(sh.length<2)continue;
+   const a=vals(o).filter(x=>/\d/.test(x)),b=vals(n).filter(x=>/\d/.test(x));
+   if(!a.length||!b.length||a.join()===b.join())continue;
+   if(o.due&&n.due&&Math.abs(o.due-n.due)/6e4<60)continue;
+   out.push({o,n,from:a,to:b,kws:sh});break;
+  }
+ }
+ return out.slice(0,6);
+}
+
+/* ---------- local storage (IndexedDB, in-memory fallback) ---------- */
+let idb=null;
+const memoryChats=new Map();
+function openDB(){return new Promise(res=>{try{const q=indexedDB.open('privatebrief',1);q.onupgradeneeded=()=>q.result.createObjectStore('chats',{keyPath:'id'});q.onsuccess=()=>{idb=q.result;res()};q.onerror=()=>res();q.onblocked=()=>res()}catch(e){res()}})}
+const dbAll=()=>idb?new Promise(r=>{try{const q=idb.transaction('chats').objectStore('chats').getAll();q.onsuccess=()=>{(q.result||[]).forEach(c=>memoryChats.set(c.id,c));r(q.result||[])};q.onerror=()=>{idb=null;r(Array.from(memoryChats.values()))}}catch(e){idb=null;r(Array.from(memoryChats.values()))}}):Promise.resolve(Array.from(memoryChats.values()));
+const dbWrite=fn=>idb?new Promise(r=>{try{const t=idb.transaction('chats','readwrite');fn(t.objectStore('chats'));t.oncomplete=()=>r();t.onerror=()=>{idb=null;r()};t.onabort=()=>{idb=null;r()}}catch(e){idb=null;r()}}):Promise.resolve();
+const dbPut=c=>{memoryChats.set(c.id,c);return dbWrite(s=>s.put(c))};
+const dbDel=id=>{memoryChats.delete(id);return dbWrite(s=>s.delete(id))};
+const dbClear=()=>{memoryChats.clear();return dbWrite(s=>s.clear())};
+
+/* ---------- state ---------- */
+let chats=[],cur=null,tab='brief',tf='pending',cf='all',csearch='',optsOpen=false,delArm=false,wipeArm=false,EVID=false,radarSel=null,focusIdx=null,NOW=new Date(),LASTMS=0;
+const cache=new Map(),aiOut={},drafts={};
+let taskPriority='all',taskQuery='';
+const keyOf=m=>m.who+'|'+m.date+m.time+'|'+m.text.slice(0,40);
+const state=(c,m)=>c.st[keyOf(m)]||'';
+const save=c=>c.temp?Promise.resolve():dbPut(c);
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2400)};
+function detect(raw){const s=raw.trim();if(s[0]==='{'||s[0]==='['){try{const d=JSON.parse(s);return d&&d.messages?'Telegram':'Slack'}catch(e){}}return /^\[?\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}/m.test(s)?'WhatsApp':'Plain text'}
+const nowOf=(c,a)=>c.ref==='chat'&&a&&a.ms.length&&a.ms[a.ms.length-1].dt?a.ms[a.ms.length-1].dt:new Date();
+
+function get(c){
+ const sig=[c.raw.length,c.me,c.scope,c.sens].join('~'),h=cache.get(c.id);if(h&&h.sig===sig)return h.a;
+ const t0=performance.now(),all=parse(c.raw),toks=(c.me||'').split(/[\s,]+/).filter(t=>t.length>1);
+ let li=-1;all.forEach((m,i)=>{if(toks.some(t=>m.who.toLowerCase().includes(t.toLowerCase())))li=i});
+ let ms=all;const n=+c.scope;
+ if(c.scope==='away'&&li>=0)ms=all.slice(li+1);else if(n&&ms.length>n)ms=ms.slice(-n);
+ let a=null;
+ if(ms.length){
+  a=analyze(ms,c.me||'');
+  let fmt='dmy';for(const m of all){if(/^\d{4}-/.test(m.date))break;const p=m.date.split(/[\/.\-]/).map(Number);if(p[0]>12){fmt='dmy';break}if(p[1]>12){fmt='mdy';break}}
+  ms.forEach(m=>{m.dt=msgDate(m,fmt);m.due=m.dls.length?resolveDL(m,m.dt):null});
+  const thr={strict:7,balanced:5,thorough:3}[c.sens]||5;
+  a.items=ms.filter(m=>!m.mine&&(m.score>=thr||(c.sens!=='strict'&&m.mention&&m.score>=3)||(c.sens==='thorough'&&m.task&&(m.mention||m.group))))
+   .sort((x,y)=>(y.unanswered-x.unanswered)||y.score-x.score||y.i-x.i);
+  a.words=ms.reduce((s,m)=>s+m.text.split(/\s+/).length,0);
+  a.quiet=ms.filter(m=>!m.mine&&m.score===0).length;
+  a.changes=detectChanges(ms);a.conflicts=detectConflicts(ms,a.changes);
+  a.changes.forEach(x=>{x.o.superseded=true;x.n.isChange=true});a.conflicts.forEach(x=>{x.o.conflict=true;x.n.conflict=true});
+  const aw=li>=0?all.slice(li+1).filter(m=>m.score!==undefined):ms;
+  a.away={n:li>=0?all.length-1-li:all.length,last:li>=0?all[li]:null,people:new Set(aw.filter(m=>!m.mine).map(m=>m.who)).size,mentions:aw.filter(m=>m.mention).length};
+  LASTMS=Math.max(1,Math.round(performance.now()-t0));
+  log('Analyzed '+pl(ms.length,'message')+' in '+LASTMS+' ms on this device. Requests sent: '+NET.out);
+ }
+ cache.set(c.id,{sig,a});return a;
+}
+function alerts(c,a){
+ const now=nowOf(c,a),pend=m=>!state(c,m);
+ const cand=a.ms.filter(m=>!m.mine&&m.due&&!m.superseded&&(m.mention||m.task||m.group||m.urgent||/\b(due|deadline|submi)/i.test(m.text)));
+ const missed=cand.filter(m=>m.due<now&&pend(m)).sort((x,y)=>x.due-y.due);
+ const soon=cand.filter(m=>m.due>=now&&m.due-now<864e5&&pend(m)).sort((x,y)=>x.due-y.due);
+ const later=cand.filter(m=>m.due-now>=864e5).sort((x,y)=>x.due-y.due);
+ const wait=a.ms.filter(m=>m.unanswered&&pend(m)&&!missed.includes(m));
+ return{now,missed,soon,later,wait};
+}
+function stat(c){
+ const a=get(c);if(!a)return{t:c.scope==='away'?'Up to date':'Empty',cls:c.scope==='away'?'ok':'mu',total:0,pend:0,done:0,hi:0,missed:0,list:[]};
+ const list=a.items.filter(m=>!state(c,m)),total=a.items.length,pend=list.length,hi=list.filter(m=>m.pri==='high').length,missed=alerts(c,a).missed.length;
+ let t,cls;
+ if(!c.me){t='Add your name';cls='mu'}else if(!pend&&!missed){t='All sorted';cls='ok'}else{t=(pend||missed)+' pending';cls=(hi||missed)?'cor':'amb'}
+ return{t,cls,total,pend,done:total-pend,hi,missed,list};
+}
+
+/* ---------- item rendering ---------- */
+const chip=(c,t)=>'<span class="chip '+c+'">'+t+'</span>';
+function why(m){
+ const r=[];if(m.mention)r.push('Mentions you (+3)');
+ if(m.dls.length)r.push('Deadline wording "'+esc(m.dls[0])+'" (+3)');
+ if(m.task)r.push('Request or task wording (+2)');if(m.urgent)r.push('Urgent wording (+3)');if(m.decision)r.push('Decision wording (+2)');
+ if(m.mention&&m.text.includes('?'))r.push('Question aimed at you (+1)');
+ if(m.group&&(m.task||m.dls.length))r.push('Addressed to everyone (+1)');
+ if(m.unanswered)r.push('You posted nothing in the next 8 messages');
+ if(m.due)r.push('Deadline resolved to '+esc(fmtT(m.due)));
+ return r;
+}
+function draftText(m){
+ const d=dueInfo(m,NOW);
+ if(d&&d.cls==='cor')return "Sorry for the delay on this. I'm on it now and will update you shortly.";
+ if(m.due)return "Got it, I'll have this done by "+fmtT(m.due)+".";
+ if(m.text.includes('?'))return "Checking on this and I'll get back to you shortly.";
+ return "Noted, thanks. I'll take care of it.";
+}
+function item(m,c,act){
+ const s=state(c,m),ch=[chip(m.pri==='high'?'cor':m.pri==='med'?'amb':'',{high:'High priority',med:'Medium',low:'Low'}[m.pri])],di=dueInfo(m,NOW);
+ if(m.urgent)ch.push(chip('cor','Urgent'));if(m.mention)ch.push(chip('vio','Mentions you'));
+ m.dls.slice(0,2).forEach(d=>ch.push(chip('amb',esc(d))));
+ if(di&&!s)ch.push(chip(di.cls,di.t));
+ if(m.unanswered&&!s)ch.push(chip('cor','No reply yet'));
+ if(m.superseded)ch.push(chip('amb','Replaced by a later message'));
+ if(m.isChange)ch.push(chip('amb','Changed decision'));
+ if(m.conflict)ch.push(chip('cor','Conflicts with another message'));
+ if(s)ch.push(chip('grn',s==='done'?'Done':'Not important'));
+ let b='';
+ if(act)b='<div class="acts">'+(s?'<button data-a="open" data-i="'+m.i+'">Reopen</button>':'<button class="ok" data-a="done" data-i="'+m.i+'">Done</button><button data-a="skip" data-i="'+m.i+'">Not important</button>'+(m.mention||m.task?'<button data-a="draft" data-i="'+m.i+'">Draft reply</button>':''))+'</div>';
+ if(act&&drafts[c.id+':'+m.i]&&!s){const t=draftText(m);b+='<div class="draft"><span>'+esc(t)+'</span><button data-a="copy" data-t="'+esc(t)+'">Copy</button></div>'}
+ const ev=EVID?'<div class="ev"><b>Evidence</b> message #'+(m.i+1)+' at '+esc(m.time)+', score '+m.score+'<ul>'+why(m).map(x=>'<li>'+x+'</li>').join('')+'</ul><div class="acts"><button data-a="jump" data-i="'+m.i+'">Open in conversation</button></div></div>':'';
+ return '<li class="it '+m.pri+(s?' fin':'')+'"><div class="meta"><b>'+esc(m.who)+'</b><span>'+esc(m.date+' '+m.time)+'</span></div><p class="ptext">'+hl(cut(m.text,280))+'</p><div class="cl">'+ch.join('')+'</div>'+b+ev+'</li>';
+}
+const ul=(a,c,act,e)=>a.length?'<ul>'+a.map(m=>item(m,c,act)).join('')+'</ul>':'<p class="empty">'+e+'</p>';
+const ICO={'Do these first':'🎯','Missed':'🚨','Decisions made':'✅','Coming up':'📅','Safe to skip':'🤫','Selected message':'📍','How to read it':'🧭','Missed deadlines and tasks':'🚨','Due in the next 24 hours':'⏰','Waiting for your reply':'💬','Decision change detector':'🔀','Conflict detector':'⚔️','Local model brief':'🤖'};
+const sec=(t,b,sm)=>'<section class="card"><h2>'+(ICO[t]?'<span class="ico">'+ICO[t]+'</span>':'')+t+(sm?'<small>'+sm+'</small>':'')+'</h2>'+b+'</section>';
+const kpi=(cls,n,l,t)=>(t?'<button class="kpi btnk '+cls+'" data-a="tab" data-v="'+t+'">':'<div class="kpi '+cls+'">')+'<b>'+n+'</b>'+l+(t?'</button>':'</div>');
+
+function cmpCard(x,k){
+ const bad=k==='conflict',w=(m,l)=>'<div><span class="lab">'+l+'</span><div class="meta"><b>'+esc(m.who)+'</b><span>'+esc(m.date+' '+m.time)+'</span></div><p class="ptext" style="margin:2px 0 0">'+hl(cut(m.text,200))+'</p></div>';
+ return '<li class="it '+(bad?'high':'med')+'"><div class="cmp">'+w(x.o,bad?'Statement A':'Earlier')+'<span class="arr">'+(bad?'≠':'→')+'</span>'+w(x.n,bad?'Statement B':'Latest')+'</div><div class="cl" style="margin-top:8px">'
+  +chip(bad?'cor':'amb',bad?'Different times for the same thing':'Decision changed')+((x.from.length||x.to.length)?chip('',esc((x.from.join(', ')||'?')+(bad?' vs ':' to ')+(x.to.join(', ')||'?'))):'')+'</div>'
+  +(EVID?'<div class="ev"><b>Evidence</b> '+(bad?'Both messages share the words "'+esc(x.kws.join(', '))+'", give different times, and neither uses change wording.':'The later message uses change wording and shares "'+esc(x.kws.join(', '))+'" with the earlier one.')+'<div class="acts"><button data-a="jump" data-i="'+x.o.i+'">Open earlier</button><button data-a="jump" data-i="'+x.n.i+'">Open later</button></div></div>':'')+'</li>';
+}
+
+/* ---------- views ---------- */
+function renderList(){
+ $('#list').innerHTML=chats.length?chats.map(c=>{const s=stat(c),p=s.total?Math.round(s.done/s.total*100):100;
+  return '<li><button class="ci'+(cur&&cur.id===c.id?' act':'')+'" data-id="'+c.id+'"><span class="av" style="--h:'+hue(c.title)+'">'+ini(c.title)+'</span><span class="ct ptext">'+esc(c.title)+'</span><span class="badge '+s.cls+'">'+s.t+'</span><span class="cm">'+esc(c.source)+(c.temp?', not saved':'')+(s.missed?', '+s.missed+' missed':'')+'</span><span class="bar"><i style="width:'+p+'%"></i></span></button></li>'}).join('')
+  :'<li class="empty">No chats yet.</li>';
+ $('#store').textContent=idb?'Saved chats are stored in this browser, on this device.':'Browser storage is blocked here, so chats last only until this tab closes. The downloaded app keeps them permanently.';
+}
+function welcome(){return '<section class="hero"><div class="hgrid"><div style="flex:1;min-width:260px"><h2>Catch up in seconds. Nothing leaves your device.</h2><p class="lead">Import a group chat and get a personal briefing: what needs you, what you missed, which decisions changed and where people disagree. It works with no internet connection.</p><div class="btns" style="margin-top:16px"><button class="primary" data-a="new">Import a chat</button><button data-a="sample">Try sample chats</button><button data-a="proof">See offline proof</button></div></div>'+ART+'</div></section>'
+ +'<div class="feat"><div class="card"><h2>Smart priority radar</h2><p>Every message plotted by urgency and relevance to you. The middle is what to do first.</p></div><div class="card"><h2>Missed and changed</h2><p>Passed deadlines, reversed decisions and conflicting times, caught for you.</p></div><div class="card"><h2>Evidence mode</h2><p>See the exact messages and rules behind every flag. No black box.</p></div><div class="card"><h2>Offline proof</h2><p>Turn off Wi-Fi, and watch a live network lockdown prove nothing is sent.</p></div></div>'}
+
+function ring(p,n){const r=38,C=2*Math.PI*r;return '<div class="ring"><svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="'+r+'" fill="none" style="stroke:var(--line)" stroke-width="9"/><circle cx="48" cy="48" r="'+r+'" fill="none" stroke="url(#g)" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+(C*p/100).toFixed(1)+' '+C.toFixed(1)+'"/></svg><b>'+n+'</b></div>'}
+
+function brief(c,a,s,al){
+ const first=(c.me||'').split(/[\s,]+/)[0],top=s.list[0],hot=al.missed.length;let h,sub;
+ if(!c.me){h='Add your name for a personal brief';sub='Open Options and enter your name as it appears in the chat. Until then this brief shows what matters to everyone.'}
+ else if(!s.pend&&!hot){h=s.total?"You're all caught up":'Nothing here needs you';sub=s.total?'All '+pl(s.total,'item')+' are sorted.':'No mentions, tasks or deadlines for you. You can skip '+pl(a.ms.length,'message')+'.'}
+ else{const n=Math.max(s.pend,hot);h=pl(n,'thing')+(n==1?' needs':' need')+' you'+(hot?', '+hot+' already missed':s.hi?', '+s.hi+' urgent':'');sub=top?'Start with '+top.who+': "'+cut(top.text,90)+'"':''}
+ const p=s.total?Math.round(s.done/s.total*100):100,mins=Math.max(1,Math.round(a.words/200)),first3=s.list.slice(0,3);
+ const aw=a.away,last=aw.last;
+ const away='<section class="card"><h2><span class="ico">👋</span>Since you were away</h2><p class="lead">'+(last?'You last wrote at '+esc(last.time)+' on '+esc(last.date)+'. Since then: ':'You have not written in this chat yet. In it: ')+pl(aw.n,'message')+' from '+pl(aw.people,'person').replace('persons','people')+', '+aw.mentions+(aw.mentions==1?' mentions':' mention')+' you'+(hot?', '+pl(hot,'deadline')+' passed':'')+(a.changes.length?', '+pl(a.changes.length,'decision')+' changed':'')+(a.conflicts.length?', '+pl(a.conflicts.length,'conflict')+' found':'')+'.</p>'
+  +(s.list.length?'<ul style="margin-top:10px">'+s.list.slice(0,5).sort((x,y)=>x.i-y.i).map(m=>'<li class="mini"><b>'+esc(m.time)+'</b> <span class="ptext">'+esc(m.who)+': '+esc(cut(m.text,90))+'</span></li>').join('')+'</ul>':'')+'</section>';
+ const ai=c.engine==='ollama'?sec('Local model brief',(aiOut[c.id]&&aiOut[c.id].busy?'<p class="empty">Asking the model on this device…</p>':aiOut[c.id]&&aiOut[c.id].t?'<p style="white-space:pre-wrap;margin:0">'+esc(aiOut[c.id].t)+'</p>':aiOut[c.id]&&aiOut[c.id].err?'<p class="err">No local model answered at localhost:11434. Install Ollama, run "ollama pull llama3.2", start it with OLLAMA_ORIGINS=* ollama serve, and open this app from your own computer. The built-in brief still works.</p>':'<p class="empty">Writes a short brief with a language model running on your own machine.</p>')+'<div class="btns" style="margin-top:10px"><button data-a="ai">Generate with local model</button></div>'):'';
+ const evh=EVID?'<div class="ev"><b>Evidence</b> This headline counts '+pl(Math.max(s.pend,hot),'flagged message')+(s.list.length?': '+s.list.slice(0,8).map(m=>'#'+(m.i+1)).join(', '):'')+'. Scores come from the rules shown on each message. Analysis took '+LASTMS+' ms with 0 requests sent.</div>':'';
+ return '<section class="hero"><div class="hgrid"><div style="flex:1;min-width:240px">'+(first?'<p class="hint" style="margin:0 0 4px">Welcome back, '+esc(first)+'.</p>':'')+'<h2>'+esc(h)+'</h2><p class="lead ptext">'+esc(sub)+'</p></div>'+ring(p,s.pend||hot)+'</div><div class="kpis">'
+  +kpi('cor',s.pend,'pending','attention')+kpi('cor',hot,'missed','deadlines')+kpi('amb',a.changes.length,a.changes.length==1?'decision changed':'decisions changed','decisions')+kpi('vio',a.conflicts.length,a.conflicts.length==1?'conflict':'conflicts','decisions')+kpi('grn',s.done,'sorted','tasks')+kpi('cy',al.soon.length+al.later.length,'deadlines ahead','deadlines')+'</div>'
+  +'<p class="hint">Reading this chat takes about '+mins+' min. This brief takes about 20 seconds.</p>'+evh+'<div class="btns" style="margin-top:12px"><button data-a="copybrief">Copy brief</button><button data-a="tab" data-v="radar">Open radar</button></div></section>'
+  +ai+away
+  +'<div class="cols"><div>'+sec('Do these first',ul(first3,c,true,s.total?'Everything is sorted.':'Nothing to do here.'))
+  +(hot?sec('Missed',ul(al.missed.slice(0,3),c,true,''),'deadlines that already passed'):'')+'</div>'
+  +'<div>'+sec('Decisions made',ul(a.dec.slice(-4),c,false,'No decisions spotted.'))
+  +sec('Coming up',ul(al.soon.concat(al.later).slice(0,4),c,false,'No upcoming deadlines.'))
+  +sec('Safe to skip','<p class="lead">'+pl(a.quiet,'message')+' of '+a.ms.length+' are small talk or don\'t involve you.'+(a.topics.length?' Main topics: '+esc(a.topics.slice(0,4).join(', '))+'.':'')+'</p>')+'</div></div>';
+}
+
+function radarTab(c,a,s,al){
+ const pts=a.ms.filter(m=>!m.mine&&m.score>=2&&!m.superseded),now=al.now;
+ if(!pts.length)return '<p class="empty">Nothing to plot yet.</p>';
+ const names=['Deadlines','Mentions','Tasks','Updates'],typ=m=>(m.dls.length||m.due)?0:m.mention?1:m.task?2:3;
+ pts.forEach(m=>{const rel=Math.min(1,.12+(m.mention?.45:0)+(m.group?.12:0)+(m.task?.15:0)+(m.unanswered?.2:0));let u=.05+(m.urgent?.35:0)+(m.decision?.08:0);
+  if(m.due){const d=(m.due-now)/36e5;u+=d<0?.6:Math.max(.12,.6*Math.exp(-d/36))}else if(m.dls.length)u+=.2;u=Math.min(1,u);m.p=.55*u+.45*rel});
+ if(radarSel===null||!pts.some(m=>m.i===radarSel))radarSel=pts.slice().sort((x,y)=>y.p-x.p)[0].i;
+ const cx=260,cy=260,R=225,g=[[],[],[],[]];pts.forEach(m=>g[typ(m)].push(m));let dots='';
+ g.forEach((arr,k)=>{arr.sort((x,y)=>y.p-x.p);arr.forEach((m,j)=>{
+  const ang=(k*90+(j+.5)/arr.length*90)*Math.PI/180,r=R*(.1+.88*(1-m.p)),x=cx+r*Math.sin(ang),y=cy-r*Math.cos(ang),st=state(c,m),sel=m.i===radarSel;
+  const col=st?'var(--grn)':m.pri==='high'?'var(--cor)':m.pri==='med'?'var(--amb)':'var(--blue)',od=m.due&&m.due<now&&!st;
+  dots+='<circle class="dotb" tabindex="0" role="button" data-a="rsel" data-i="'+m.i+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+Math.min(14,6+m.score*.9).toFixed(1)+'" style="fill:'+col+';fill-opacity:'+(st?.35:.92)+';stroke:'+(sel?'var(--cy)':od?'var(--ink)':'var(--bg)')+';stroke-width:'+(sel?4:od?3:1.5)+'"><title>'+esc(m.who+': '+cut(m.text,80))+'</title></circle>'})});
+ const rings=[.32,.55,.77,.98],rl=['Now','Today','Soon','Later'];
+ const svg='<svg class="radar" viewBox="0 0 520 520" role="group" aria-label="Priority radar"><defs><radialGradient id="rg"><stop offset="0" style="stop-color:var(--vio)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--vio)" stop-opacity="0"/></radialGradient></defs><circle cx="260" cy="260" r="225" fill="url(#rg)"/>'
+  +rings.map((f,k)=>'<circle cx="260" cy="260" r="'+(R*f).toFixed(1)+'" fill="none" style="stroke:var(--line)" stroke-width="1.5" '+(k<3?'stroke-dasharray="4 5"':'')+'/><text x="266" y="'+(260-R*f+14).toFixed(1)+'" style="fill:var(--mute)" font-size="12">'+rl[k]+'</text>').join('')
+  +'<line x1="260" y1="30" x2="260" y2="490" style="stroke:var(--line)"/><line x1="30" y1="260" x2="490" y2="260" style="stroke:var(--line)"/><path class="sweep" d="M260 260 L260 35 A225 225 0 0 1 404.6 87.7 Z" fill="rgba(47,227,211,.14)"/>'
+  +'<text x="500" y="26" text-anchor="end" style="fill:var(--ink)" font-weight="700" font-size="14">'+names[0]+'</text><text x="500" y="508" text-anchor="end" style="fill:var(--ink)" font-weight="700" font-size="14">'+names[1]+'</text><text x="20" y="508" style="fill:var(--ink)" font-weight="700" font-size="14">'+names[2]+'</text><text x="20" y="26" style="fill:var(--ink)" font-weight="700" font-size="14">'+names[3]+'</text>'
+  +'<circle cx="260" cy="260" r="5" style="fill:var(--cy)"/>'+dots+'</svg>';
+ const sel=a.ms[radarSel];
+ return '<div class="cols"><section class="card"><h2>Smart priority radar <small>click a dot</small></h2>'+svg+'</section><div>'
+  +sec('Selected message','<ul>'+item(sel,c,true)+'</ul>')
+  +sec('How to read it','<p class="lead" style="font-size:14.5px">The closer a dot is to the centre, the more urgent and relevant it is for you. The section shows what kind of message it is. Bigger dots scored higher. A white ring means the deadline has passed. Green dots are sorted.</p><div class="cl" style="margin-top:10px">'+chip('cor','High')+chip('amb','Medium')+chip('','Low')+chip('grn','Sorted')+'</div>')+'</div></div>';
+}
+
+function alertsTab(c,a,s,al){
+ return sec('Missed deadlines and tasks',ul(al.missed,c,true,'Nothing missed. No open deadline has passed.'),'deadline passed and still open')
+  +sec('Due in the next 24 hours',ul(al.soon,c,true,'Nothing due in the next day.'))
+  +sec('Waiting for your reply',ul(al.wait,c,true,'No one is waiting on you.'))
+  +sec('Decision change detector','<p class="hint" style="margin:0 0 10px">Finds a later message that changes something said earlier, such as a new time or venue.</p>'+(a.changes.length?'<ul>'+a.changes.map(x=>cmpCard(x,'change')).join('')+'</ul>':'<p class="empty">No decisions were changed.</p>'))
+  +sec('Conflict detector','<p class="hint" style="margin:0 0 10px">Finds two messages that give different times for the same thing, with no change announced.</p>'+(a.conflicts.length?'<ul>'+a.conflicts.map(x=>cmpCard(x,'conflict')).join('')+'</ul>':'<p class="empty">No conflicting statements found.</p>'));
+}
+function taskItems(c,a,s){
+ const all=a.items,sorted=all.filter(m=>state(c,m)),pend=s.list;
+ const set=({pending:pend,sorted:sorted,all:all}[tf]||pend).filter(m=>
+  (taskPriority==='all'||m.pri===taskPriority)&&
+  (!taskQuery||(m.who+' '+m.text).toLowerCase().includes(taskQuery.toLowerCase())));
+ return ul(set,c,true,tf==='pending'?'Nothing pending. Nice.':'Nothing here yet.');
+}
+function tasks(c,a,s){
+ const all=a.items,sorted=all.filter(m=>state(c,m)),pend=s.list;
+ const P=(k,l,n)=>'<button data-a="tf" data-v="'+k+'" aria-pressed="'+(tf===k)+'">'+l+' ('+n+')</button>';
+ return '<div class="pills">'+P('pending','Pending',pend.length)+P('sorted','Sorted',sorted.length)+P('all','All',all.length)+'</div>'
+  +'<div class="grid2"><div><label for="taskq">Search tasks and messages</label><input id="taskq" value="'+esc(taskQuery)+'" placeholder="Search by sender or keyword"></div><div><label for="taskpriority">Priority</label><select id="taskpriority"><option value="all">All priorities</option><option value="high"'+(taskPriority==='high'?' selected':'')+'>High</option><option value="med"'+(taskPriority==='med'?' selected':'')+'>Medium</option><option value="low"'+(taskPriority==='low'?' selected':'')+'>Low</option></select></div></div><div id="taskitems">'+taskItems(c,a,s)+'</div>'
+  +(all.length?'<div class="btns" style="margin-top:8px">'+(pend.length?'<button data-a="markall">Mark all sorted</button>':'')+(sorted.length?'<button data-a="reopenall">Reopen all</button>':'')+'</div>':'');
+}
+function renderTaskItems(){
+ if(!cur)return;
+ const a=get(cur),el=$('#taskitems');
+ if(a&&el)el.innerHTML=taskItems(cur,a,stat(cur));
+}
+function attentionTab(c,a,s){
+ const visible=a.items.filter(m=>!state(c,m));
+ return sec('Needs your attention',ul(visible,c,true,'No open items detected.'))
+  +sec('All detected items',ul(a.items,c,true,'No messages met the current detection rules.'));
+}
+function decisionsTab(c,a,s){
+ return sec('Confirmed or proposed decisions',ul(a.dec,c,false,'No decision phrases detected.'))
+  +sec('Changed plans',a.changes.length?'<ul>'+a.changes.map(x=>cmpCard(x,'change')).join('')+'</ul>':'<p class="empty">No changed plans detected.</p>')
+  +sec('Potential conflicts',a.conflicts.length?'<ul>'+a.conflicts.map(x=>cmpCard(x,'conflict')).join('')+'</ul>':'<p class="empty">No potential conflicts detected.</p>')
+  +'<p class="hint">Rule-based indicators only: verify ambiguous changes and conflicts against the source messages.</p>';
+}
+function deadlinesTab(c,a,s,al){
+ const candidate=a.dl.filter(m=>!m.superseded);
+ return sec('Overdue',ul(al.missed,c,true,'No open overdue deadlines detected.'))
+  +sec('Due within 24 hours',ul(al.soon,c,true,'No open deadlines detected within 24 hours.'))
+  +sec('Later deadlines',ul(al.later,c,true,'No later deadlines detected.'))
+  +sec('Messages with deadline wording',ul(candidate,c,true,'No deadline phrases detected.'));
+}
+function peopleTab(a){
+ const max=Math.max(1,...a.people.map(p=>p[1]));
+ const participants=a.people.map(([name,count])=>'<li class="it low"><div class="meta"><b>'+esc(name)+'</b><span>'+count+' '+(count===1?'message':'messages')+'</span></div><div class="bar"><i style="width:'+Math.round(count/max*100)+'%"></i></div></li>').join('');
+ const topics=a.topics.length?a.topics.map(t=>'<span class="chip vio">'+esc(t)+'</span>').join(' '):'<p class="empty">No repeated topic keywords found.</p>';
+ return '<div class="cols"><section class="card"><h2>Participant activity</h2><p class="hint">'+a.people.length+' participants in '+a.ms.length+' messages.</p><ul>'+participants+'</ul></section><section class="card"><h2>Frequently discussed topics</h2><div class="cl">'+topics+'</div><p class="hint">Topics are repeated keywords, not AI-generated themes.</p></section></div>'
+  +sec('Conversation overview','<p class="lead">'+esc(a.summary)+'</p><p class="hint">'+a.words+' words · '+a.quiet+' messages likely skippable by the simple rule-based filter · '+a.mentions+' direct mentions matched to your name.</p>');
+}
+function convo(){
+ const F=[['all','All'],['pending','Pending'],['mention','Mentions'],['decision','Decisions'],['task','Tasks'],['deadline','Deadlines'],['flag','Changes and conflicts']];
+ return '<input id="q" placeholder="Search this chat" aria-label="Search this chat" value="'+esc(csearch)+'" style="margin-bottom:10px"><div class="pills">'+F.map(f=>'<button data-a="cf" data-v="'+f[0]+'" aria-pressed="'+(cf===f[0])+'">'+f[1]+'</button>').join('')+'</div><ul id="tl"></ul>';
+}
+function renderTL(){
+ const c=cur,a=c&&get(c),el=$('#tl');if(!a||!el)return;
+ const s=stat(c),P=new Set(s.list.map(m=>m.i)),I=new Set(a.items.map(m=>m.i)),T=new Set(a.act.map(m=>m.i)),q=csearch.toLowerCase();
+ const f={all:()=>1,pending:m=>P.has(m.i),mention:m=>m.mention,decision:m=>m.decision,task:m=>T.has(m.i),deadline:m=>m.dls.length,flag:m=>m.superseded||m.isChange||m.conflict}[cf];
+ const r=a.ms.filter(m=>f(m)&&(!q||(m.who+' '+m.text).toLowerCase().includes(q)));
+ el.innerHTML=r.length?r.slice(0,500).map(m=>{const st=state(c,m);return '<li id="m'+m.i+'" class="it '+(I.has(m.i)?(st?'fin':m.pri):'low')+'"><div class="meta"><b>'+esc(m.who)+'</b><span>'+esc(m.date+' '+m.time)+'</span>'+(st?chip('grn','Sorted'):'')+(m.superseded?chip('amb','Replaced later'):'')+(m.isChange?chip('amb','Changed decision'):'')+(m.conflict?chip('cor','Conflict'):'')+'</div><p class="ptext" style="margin:2px 0 0">'+hl(m.text)+'</p></li>'}).join(''):'<p class="empty">No messages match.</p>';
+ if(focusIdx!==null){const e=document.getElementById('m'+focusIdx);if(e){e.scrollIntoView({block:'center'});e.classList.add('flash')}focusIdx=null}
+}
+function renderMain(){
+ const M=$('#main');if(!cur){M.innerHTML=welcome();return}
+ const c=cur,a=get(c),s=stat(c),o=(v,l,x)=>'<option value="'+v+'"'+(x==v?' selected':'')+'>'+l+'</option>';
+ NOW=nowOf(c,a);const al=a?alerts(c,a):null;
+ const body=!a?'<p class="empty">'+(c.scope==='away'?"You haven't missed anything since your last message.":'No messages could be read from this chat. Check the format, or delete it and import again.')+'</p>':tab==='brief'?brief(c,a,s,al):tab==='radar'?radarTab(c,a,s,al):tab==='alerts'?alertsTab(c,a,s,al):tab==='attention'?attentionTab(c,a,s):tab==='decisions'?decisionsTab(c,a,s):tab==='deadlines'?deadlinesTab(c,a,s,al):tab==='people'?peopleTab(a):tab==='tasks'?tasks(c,a,s):convo();
+ const p=s.total?Math.round(s.done/s.total*100):100,na=a?al.missed.length+a.changes.length+a.conflicts.length:0;
+ M.innerHTML='<div class="chead"><div><h1 class="ptext">'+esc(c.title)+'</h1><p class="sub">'+esc(c.source)+' chat, '+(a?pl(a.ms.length,'message'):'no new messages')+(c.temp?', not saved on this device':', saved on this device')+'</p></div><span class="badge '+s.cls+'" style="font-size:14px;padding:5px 13px">'+s.t+'</span></div>'
+  +'<div class="prog">'+s.done+' of '+s.total+' sorted<div class="bar"><i style="width:'+p+'%"></i></div></div>'
+  +'<details class="opts" id="opts"'+(optsOpen?' open':'')+'><summary>Options</summary><div class="og">'
+  +'<div><label for="o1">Chat name</label><input id="o1" data-o="title" value="'+esc(c.title)+'"></div>'
+  +'<div><label for="o2">Your name in the chat</label><input id="o2" data-o="me" value="'+esc(c.me)+'" placeholder="e.g. Riya"></div>'
+  +'<div><label for="o3">Treat as unread</label><select id="o3" data-o="scope">'+o('0','All messages',c.scope)+o('away','Since my last message',c.scope)+o('200','Last 200',c.scope)+o('100','Last 100',c.scope)+o('50','Last 50',c.scope)+o('25','Last 25',c.scope)+'</select></div>'
+  +'<div><label for="o4">How much to flag</label><select id="o4" data-o="sens">'+o('strict','Focused: only the important',c.sens)+o('balanced','Balanced',c.sens)+o('thorough','Thorough: include small asks',c.sens)+'</select></div>'
+  +'<div><label for="o7">Treat "now" as</label><select id="o7" data-o="ref">'+o('device','Device clock',c.ref||'device')+o('chat','End of the chat',c.ref||'device')+'</select></div>'
+  +'<div><label for="o5">Summary engine</label><select id="o5" data-o="engine">'+o('rules','Built-in (works anywhere offline)',c.engine)+o('ollama','Local language model (Ollama)',c.engine)+'</select></div>'
+  +(c.engine==='ollama'?'<div><label for="o6">Model name</label><input id="o6" data-o="model" value="'+esc(c.model)+'"></div>':'')
+  +'</div><div class="btns" style="margin-top:12px"><button class="danger" data-a="del">'+(delArm?'Click again to delete this chat':'Delete this chat')+'</button></div></details>'
+  +'<div class="tabs" role="tablist">'+[['brief','Brief'],['attention','Attention ('+s.pend+')'],['decisions','Decisions ('+(a?a.dec.length:0)+')'],['deadlines','Deadlines ('+(a?a.dl.length:0)+')'],['convo','Conversation'],['people','People & Topics'],['tasks','Task manager'],['radar','Priority radar'],['alerts','All alerts'+(na?' ('+na+')':'')]].map(t=>'<button role="tab" data-a="tab" data-v="'+t[0]+'" aria-selected="'+(tab===t[0])+'">'+t[1]+'</button>').join('')+'</div>'
+  +'<div>'+body+'</div>';
+ if(tab==='convo')renderTL();countUp();
+}
+function renderAll(){renderList();renderMain()}
+
+/* ---------- samples (dates are relative to today so the demo always works) ---------- */
+function sampleChats(){
+ const t=new Date(),D=n=>new Date(t.getFullYear(),t.getMonth(),t.getDate()+n),p2=n=>String(n).padStart(2,'0');
+ const fm=d=>p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+p2(d.getFullYear()%100),MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ const build=(d,r)=>r.map(x=>fm(d)+', '+x[0]+' - '+x[1]+': '+x[2]).join('\n'),due=D(2).getDate()+' '+MN[D(2).getMonth()];
+ return[
+  {title:'Weekend plans',me:'Riya',raw:build(D(-2),[['7:02 pm','Meera','Anyone up for a movie this weekend?'],['7:04 pm','Dev','Sure, I am in'],['7:10 pm','Ananya','Same, any good picks'],['7:12 pm','Meera','The new sci-fi one looks fun'],['7:15 pm','Dev','haha nice']])},
+  {title:'Hackathon team',me:'Riya',raw:build(D(-1),[['8:55 am','Riya','Morning team, I will look at the slides tonight.'],['9:12 am','Karthik','Quick update on the hackathon demo.'],['9:14 am','Karthik','@Riya can you finish the slide deck by 6 pm today? Judges want it before the walkthrough.'],['9:20 am','Ananya','I will handle the backend API. Should be done by tonight.'],['9:31 am','Dev','did anyone watch the match last night'],['9:32 am','Ananya','yes!! unreal ending'],['9:40 am','Karthik','Venue for the demo is Lab 5.'],['9:48 am','Ananya','Team meeting is at 3 pm tomorrow, same room.'],['10:05 am','Karthik',"Let's go with React for the frontend, final decision. No more switching."],['10:07 am','Dev','Agreed. I will set up the repo.'],['10:40 am','Meera','Riya, did you get the dataset from the mentor? We need it urgently for testing.'],['10:41 am','Dev','lol'],['11:02 am','Dev','Everyone please push your branches before 2 pm tomorrow.'],['11:05 am','Dev','Demo begins at 11 am tomorrow.'],['11:15 am','Ananya',"Reminder: the registration form must be submitted by Friday 5 pm. Don't forget!"],['11:30 am','Meera','anyone have a charger?'],['11:52 am','Meera','Heard the demo begins at 2 pm tomorrow.'],['12:02 pm','Karthik','Venue is changed to Lab 3, confirmed.'],['12:05 pm','Dev','nice'],['12:40 pm','Ananya','Meeting rescheduled to 4:30 pm tomorrow. Please be on time.'],['1:10 pm','Karthik','Riya, ping me when the deck is ready so I can review it.'],['1:22 pm','Meera','Final submission is due '+due+', 11:59 pm. Everything must be uploaded.'],['1:30 pm','Dev','haha ok']])}
+ ];
+}
+
+/* ---------- actions ---------- */
+async function addChat(o){
+ const c={id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title:o.title||'Chat '+new Date().toLocaleDateString(),source:detect(o.raw),added:Date.now(),raw:o.raw,me:o.me||'',scope:'0',sens:'balanced',ref:'device',engine:'rules',model:'llama3.2',st:{},temp:!!o.temp};
+ chats.unshift(c);await save(c);cur=c;tab='brief';radarSel=null;return c;
+}
+async function loadSamples(){for(const s of sampleChats()){const existing=chats.find(c=>c.raw===s.raw);if(existing){cur=existing;continue}await addChat(s)}$('#dimp').close();renderAll()}
+function readFile(f,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
+function fillImport(f){readFile(f,t=>{$('#iraw').value=t;if(!$('#itl').value)$('#itl').value=f.name.replace(/\.[^.]+$/,'')})}
+async function goImport(){
+ const raw=$('#iraw').value;$('#ierr').textContent='';
+ if(raw.length>10*1024*1024){$('#ierr').textContent='This chat is larger than 10 MB. Split the export into smaller files and import them separately.';return}
+ if(!parse(raw).length){$('#ierr').textContent='No messages found. Use a WhatsApp .txt, a Telegram or Slack .json export, or lines like "Name: message".';return}
+ const duplicate=chats.find(c=>c.raw===raw);
+ if(duplicate){
+  duplicate.title=$('#itl').value.trim()||duplicate.title;
+  duplicate.me=$('#ime').value.trim()||duplicate.me;
+  if($('#isave').checked)duplicate.temp=false;
+  await save(duplicate);cur=duplicate;$('#dimp').close();renderAll();toast('This conversation is already imported.');return
+ }
+ await addChat({title:$('#itl').value.trim(),me:$('#ime').value.trim(),raw,temp:!$('#isave').checked});
+ $('#dimp').close();$('#iraw').value='';$('#itl').value='';renderAll();
+}
+async function setState(c,m,v){const was=stat(c).t,k=keyOf(m);if(v)c.st[k]=v;else delete c.st[k];await save(c);renderAll();if(was!=='All sorted'&&stat(c).t==='All sorted'&&c.me)celebrate()}
+async function aiBrief(c,a){
+ aiOut[c.id]={busy:true};renderMain();
+ const s=stat(c),pick=[...new Set(s.list.slice(0,10).concat(a.dec.slice(-4),a.dl.slice(-4)))].sort((x,y)=>x.i-y.i);
+ const prompt='You are a private catch-up assistant. Using only the chat excerpts below, write a brief of at most 5 short sentences, then a list of what '+(c.me||'the reader')+' must do and by when. Do not invent details.\n\nCONTEXT: '+a.summary+'\n\nKEY MESSAGES:\n'+pick.map(m=>m.who+': '+cut(m.text,220)).join('\n');
+ try{const r=await fetch('http://localhost:11434/api/generate',{method:'POST',body:JSON.stringify({model:c.model||'llama3.2',prompt,stream:false})});
+  if(!r.ok)throw 0;aiOut[c.id]={t:(await r.json()).response.trim()}}catch(e){aiOut[c.id]={err:1}}
+ renderMain();
+}
+function briefText(c,a,s,al){
+ const L=['PrivateBrief: '+c.title,'',pl(s.pend,'item')+' pending, '+al.missed.length+' missed, '+a.changes.length+' decisions changed, '+a.conflicts.length+' conflicts.',''];
+ if(s.list.length){L.push('Do first:');s.list.slice(0,5).forEach(m=>L.push('- '+m.who+': '+cut(m.text,120)+(m.due?' (due '+fmtT(m.due)+')':'')))}
+ if(al.missed.length){L.push('','Missed:');al.missed.forEach(m=>L.push('- '+cut(m.text,120)))}
+ a.changes.forEach(x=>L.push('','Changed: '+x.from.join(', ')+' to '+x.to.join(', ')+' ('+cut(x.n.text,80)+')'));
+ a.conflicts.forEach(x=>L.push('','Conflict: '+x.from.join(', ')+' vs '+x.to.join(', ')+' ('+cut(x.o.text,60)+' / '+cut(x.n.text,60)+')'));
+ return L.join('\n');
+}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('Copied')}catch(e){toast('Copy blocked by the browser')}}
+
+/* ---------- privacy, lockdown and offline proof ---------- */
+const NET={out:0,local:0,blocked:0};let LOCK=true;const LOG=[];
+function log(t){LOG.unshift(new Date().toLocaleTimeString()+'  '+t);if(LOG.length>14)LOG.length=14;const d=$('#dproof');if(d&&d.open)renderProof()}
+const isLocal=u=>/^https?:\/\/(localhost|127\.0\.0\.1)([:\/]|$)/.test(u);
+function paint(){const ts=$('#trustsub');if(ts)ts.textContent=NET.out+' requests sent. '+NET.blocked+' blocked.';$('#reqs').textContent='Sent to the internet: '+NET.out+(NET.blocked?'. Blocked: '+NET.blocked:'')+(NET.local?'. Local model: '+NET.local:'')}
+function guard(u){if(isLocal(u)){NET.local++;paint();return true}if(LOCK){NET.blocked++;log('Blocked a request to '+cut(u,40));paint();return false}NET.out++;log('Sent a request to '+cut(u,40));paint();return true}
+if(window.fetch){const _f=window.fetch.bind(window);window.fetch=function(u){const s=String((u&&u.url)||u);if(!guard(s))return Promise.reject(new TypeError('Blocked by PrivateBrief network lockdown'));return _f.apply(null,arguments)}}
+try{const _o=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){if(!guard(String(u)))throw new Error('Blocked by PrivateBrief network lockdown');return _o.apply(this,arguments)}}catch(e){}
+try{navigator.sendBeacon=function(u){guard(String(u));return false}}catch(e){}
+try{if(window.WebSocket){const _W=window.WebSocket;window.WebSocket=function(u){if(!guard(String(u)))throw new Error('Blocked by PrivateBrief network lockdown');return new _W(u)}}}catch(e){}
+function netStatus(){const on=navigator.onLine,n=$('#net');n.textContent=on?'Online. Nothing is sent':'Offline. Fully working';n.className='pill dot '+(on?'on':'off')}
+addEventListener('online',()=>{netStatus();log('Connection restored. Nothing was sent.')});
+addEventListener('offline',()=>{netStatus();log('Connection lost. The app kept working.')});
+function ext(){try{return performance.getEntriesByType('resource').map(e=>e.name).filter(n=>{try{const u=new URL(n,location.href);return !/^(data|blob):/.test(u.protocol)&&u.origin!==location.origin}catch(e){return false}})}catch(e){return[]}}
+function renderProof(){
+ const on=navigator.onLine,ex=ext(),sw=!!(navigator.serviceWorker&&navigator.serviceWorker.controller),saved=chats.filter(c=>!c.temp).length;
+ $('#pbanner').className='banner '+(on?'on':'off');
+ $('#pbanner').textContent=on?'Online, but nothing is leaving this device: '+(LOCK?'lockdown is on, ':'')+NET.out+' requests sent.':'Offline proof passed: no connection, and the app is still analyzing your chats.';
+ const row=(k,t,d)=>'<div class="chk2 '+k+'"><i></i><div><b>'+t+'</b><span>'+d+'</span></div></div>';
+ $('#pchecks').innerHTML=row(on?'warn':'ok','Connection',on?'Online right now. Turn off Wi-Fi and this page keeps working.':'Offline right now, and everything still works.')
+  +row(LOCK?'ok':'warn','Network lockdown',LOCK?'On. Requests to anything except your own machine are blocked. Blocked so far: '+NET.blocked+'.':'Off. Requests from this page are allowed.')
+  +row(NET.out?'bad':'ok','Requests sent to the internet',NET.out+' sent by this page. The only allowed target is a model on localhost ('+NET.local+' calls).')
+  +row(ex.length?'bad':'ok','External resources loaded',ex.length?esc(ex.slice(0,3).join(', ')):'None. No outside scripts, fonts, images or trackers.')
+  +row(idb?'ok':'warn','Chats stored on this device',saved+' saved via '+(idb?'IndexedDB in this browser.':'memory only. Browser storage is blocked here.'))
+  +row(sw?'ok':'warn','Offline install',sw?'Service worker active. The app opens with no internet.':'Not installed here. Open the downloaded app through localhost to install it.')
+  +row('ok','Analysis speed','Last analysis took '+LASTMS+' ms on this device.');
+ $('#plog').innerHTML=LOG.length?LOG.map(x=>'<li>'+esc(x)+'</li>').join(''):'<li>No events yet.</li>';
+ $('#lockbtn').textContent=LOCK?'Turn lockdown off':'Turn lockdown on';
+}
+async function selfTest(){
+ const t0=performance.now(),nm=NAME,ms=parse(sampleChats()[1].raw);analyze(ms,'Riya');NAME=nm;
+ const dt=Math.max(1,Math.round(performance.now()-t0));let res='skipped because lockdown is off';
+ if(LOCK){try{await fetch('https://example.com/privatebrief-selftest',{mode:'no-cors'});res='NOT blocked'}catch(e){res='blocked, nothing left the device'}}
+ $('#pself').textContent='Analyzed '+pl(ms.length,'message')+' in '+dt+' ms. Test request to example.com: '+res+'. Requests sent to the internet: '+NET.out+'.';
+ log('Self-test finished in '+dt+' ms. Requests sent: '+NET.out);renderProof();
+}
+function livePanel(){$('#live').innerHTML='<div>Connection: <b>'+(navigator.onLine?'online (nothing is sent)':'offline')+'</b></div><div>Requests sent to the internet: <b>'+NET.out+'</b>, blocked: <b>'+NET.blocked+'</b></div><div>Local model requests: <b>'+NET.local+'</b></div><div>Saved chats: <b>'+chats.filter(c=>!c.temp).length+'</b>, stored via <b>'+(idb?'IndexedDB on this device':'memory only (storage blocked here)')+'</b></div>'}
+
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('[data-a],[data-id]');if(!b)return;
+ if(b.dataset.id){cur=chats.find(c=>c.id===b.dataset.id);tab='brief';radarSel=null;delArm=false;renderAll();return}
+ const a=b.dataset.a,v=b.dataset.v,c=cur,A=c&&get(c),m=A&&A.ms[+b.dataset.i];
+ if(a==='new'){$('#ierr').textContent='';$('#dimp').showModal()}
+ else if(a==='sample')await loadSamples();
+ else if(a==='icancel')$('#dimp').close();
+ else if(a==='igo')await goImport();
+ else if(a==='pv'){livePanel();$('#pmsg').textContent='';$('#dpv').showModal()}
+ else if(a==='pclose')$('#dpv').close();
+ else if(a==='proof'){renderProof();$('#dproof').showModal()}
+ else if(a==='pcloseproof')$('#dproof').close();
+ else if(a==='lock'){LOCK=!LOCK;log('Network lockdown turned '+(LOCK?'on':'off'));renderProof()}
+ else if(a==='selftest')await selfTest();
+ else if(a==='blur'){const on=document.body.classList.toggle('blur');b.setAttribute('aria-pressed',on)}
+ else if(a==='theme')setTheme(v);
+ else if(a==='evid'){EVID=!EVID;b.setAttribute('aria-pressed',EVID);renderMain();toast(EVID?'Evidence mode on':'Evidence mode off')}
+ else if(a==='done'||a==='skip')await setState(c,m,a);
+ else if(a==='open')await setState(c,m,'');
+ else if(a==='tab'){tab=v;renderMain()}
+ else if(a==='tf'){tf=v;renderMain()}
+ else if(a==='cf'){cf=v;renderMain()}
+ else if(a==='rsel'){radarSel=+b.dataset.i;renderMain()}
+ else if(a==='jump'){focusIdx=+b.dataset.i;tab='convo';cf='all';csearch='';renderMain()}
+ else if(a==='draft'){const k=c.id+':'+b.dataset.i;drafts[k]=!drafts[k];renderMain()}
+ else if(a==='copy')await copyText(b.dataset.t);
+ else if(a==='copybrief'){const s=stat(c);await copyText(briefText(c,A,s,alerts(c,A)))}
+ else if(a==='markall'){stat(c).list.forEach(x=>c.st[keyOf(x)]='done');await save(c);renderAll()}
+ else if(a==='reopenall'){A.items.forEach(x=>delete c.st[keyOf(x)]);await save(c);renderAll()}
+ else if(a==='ai')await aiBrief(c,A);
+ else if(a==='del'){if(!delArm){delArm=true;renderMain();return}
+  delArm=false;await dbDel(c.id);chats=chats.filter(x=>x.id!==c.id);cur=chats[0]||null;renderAll()}
+ else if(a==='wipe'){if(!wipeArm){wipeArm=true;b.textContent='Click again to delete everything';return}
+  wipeArm=false;b.textContent='Delete all data';await dbClear();chats=[];cur=null;cache.clear();renderAll();livePanel();$('#pmsg').textContent='All saved chats, progress and settings were deleted from this device.'}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('dotb')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+$('#main').addEventListener('change',async e=>{
+ if(e.target.id==='taskpriority'){taskPriority=e.target.value;renderTaskItems();return}
+ const o=e.target.dataset.o;if(!o||!cur)return;cur[o]=e.target.value.trim();if(o==='title'&&!cur.title)cur.title='Untitled chat';radarSel=null;await save(cur);renderAll();
+});
+$('#main').addEventListener('input',e=>{if(e.target.id==='q'){csearch=e.target.value;renderTL()}else if(e.target.id==='taskq'){taskQuery=e.target.value;renderTaskItems()}});
+$('#main').addEventListener('toggle',e=>{if(e.target.id==='opts')optsOpen=e.target.open},true);
+$('#ifile').onchange=e=>{const f=e.target.files[0];if(f)fillImport(f)};
+$('#iraw').addEventListener('dragover',e=>e.preventDefault());
+$('#iraw').addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)fillImport(f)});
+$('#exp').onclick=()=>{const bl=new Blob([JSON.stringify({app:'PrivateBrief',v:1,chats:chats.filter(c=>!c.temp)})],{type:'application/json'});const l=document.createElement('a');l.href=URL.createObjectURL(bl);l.download='privatebrief-backup.json';document.body.appendChild(l);l.click();l.remove();$('#pmsg').textContent='Backup created. If nothing downloaded, this preview blocked it; the downloaded app supports it.'};
+$('#rest').onchange=e=>{const f=e.target.files[0];if(!f)return;readFile(f,async t=>{try{const d=JSON.parse(t);if(d.app!=='PrivateBrief'||d.v!==1||!Array.isArray(d.chats))throw new Error('Invalid backup');let n=0;for(const c of d.chats){if(!c||typeof c.id!=='string'||typeof c.raw!=='string'||!c.raw.trim())continue;c.title=typeof c.title==='string'&&c.title.trim()?c.title:'Restored chat';c.source=typeof c.source==='string'?c.source:detect(c.raw);c.st=c.st&&typeof c.st==='object'?c.st:{};const i=chats.findIndex(x=>x.id===c.id||x.raw===c.raw);if(i>=0){c.id=chats[i].id;chats[i]=c}else chats.push(c);await dbPut(c);n++}chats.sort((x,y)=>y.added-x.added);cur=cur||chats[0]||null;cache.clear();renderAll();$('#pmsg').textContent='Restored '+pl(n,'chat')+'.'}catch(x){$('#pmsg').textContent='That file is not a valid PrivateBrief backup.'}})};
+
+/* ---------- polish: themes, avatars, count-up, celebration ---------- */
+const hue=s=>{let n=0;for(const ch of String(s))n=(n*31+ch.charCodeAt(0))%360;return n};
+const ini=s=>(String(s).trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('')||'?').toUpperCase();
+const ART='<svg class="art" viewBox="0 0 220 220" width="190" height="190" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#27e6ff"/></linearGradient></defs><circle cx="110" cy="110" r="102" fill="none" stroke="url(#wg)" stroke-opacity=".4" stroke-dasharray="3 7"/><circle cx="110" cy="110" r="72" fill="none" stroke="url(#wg)" stroke-opacity=".55"/><circle cx="110" cy="110" r="44" fill="url(#wg)" fill-opacity=".16" stroke="url(#wg)"/><g class="spin"><circle cx="110" cy="8" r="7" fill="#ff5c8a"/><circle cx="182" cy="110" r="5" fill="#ffc247"/><circle cx="110" cy="182" r="6" fill="#3df5a0"/></g><rect x="90" y="106" width="40" height="30" rx="7" fill="url(#wg)"/><path d="M97 106v-8a13 13 0 0 1 26 0v8" fill="none" stroke="url(#wg)" stroke-width="6" stroke-linecap="round"/></svg>';
+function setTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('pb:theme',t)}catch(e){}document.querySelectorAll('[data-a="theme"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===t))}
+let lastAnim='';
+function countUp(){
+ try{const k=(cur&&cur.id)+tab;if(k===lastAnim)return;lastAnim=k;if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  document.querySelectorAll('.kpi b,.ring b').forEach(e=>{const n=parseInt(e.textContent,10);if(!(n>0))return;const t0=performance.now(),step=t=>{const p=Math.min(1,(t-t0)/600);e.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)};e.textContent='0';requestAnimationFrame(step)})}catch(e){}
+}
+function celebrate(){
+ toast('All sorted. Nice work.');
+ try{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;const e=$('#confetti'),cols=['#a78bfa','#27e6ff','#ffc247','#ff5c8a','#3df5a0'];let h='';
+  for(let i=0;i<46;i++)h+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;background:'+cols[i%5]+';--dx:'+(Math.random()*160-80).toFixed(0)+'px;animation-delay:'+(Math.random()*.5).toFixed(2)+'s"></i>';
+  e.innerHTML=h;setTimeout(()=>{e.innerHTML=''},3200)}catch(e){}
+}
+let th='aurora';try{th=localStorage.getItem('pb:theme')||'aurora'}catch(e){}
+setTheme(th);
+netStatus();paint();
+(async()=>{await openDB();chats=(await dbAll()).sort((x,y)=>y.added-x.added);cur=chats[0]||null;renderAll()})();
+if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('./service-worker.js').catch(()=>log('Offline cache could not be installed. The app remains usable while this page is open.'));
+
+</script>
+</body>
+</html>
